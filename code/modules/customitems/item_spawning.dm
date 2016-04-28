@@ -29,7 +29,7 @@
 		testing("\[CustomItem\] Setting up [path] for [M.ckey] ([M.real_name]).  jobmask=[jobmask];propadjust=[propadjust]")
 		var/ok=0
 		if(jobmask!="*")
-			var/allowed_jobs = text2list(jobmask,",")
+			var/allowed_jobs = splittext(jobmask,",")
 			var/alt_blocked=0
 			if(M.mind.role_alt_title)
 				if(!(M.mind.role_alt_title in allowed_jobs))
@@ -54,7 +54,8 @@
 				I.fingerprint_hash = C.fingerprint_hash
 				//I.pin = C.pin
 				//replace old ID
-				del(C)
+				qdel(C)
+				C = null
 				ok = M.equip_if_possible(I, slot_wear_id, 0)	//if 1, last argument deletes on fail
 				break
 			testing("Replaced ID!")
@@ -62,14 +63,14 @@
 			Item.loc = M.back
 			ok = 1
 			testing("Added to [M.back.name]!")
-			M << "\blue Your [Item.name] has been added to your [M.back.name]."
+			to_chat(M, "<span class='notice'>Your [Item.name] has been added to your [M.back.name].</span>")
 		else
 			for(var/obj/item/weapon/storage/S in M.contents) // Try to place it in any item that can store stuff, on the mob.
 				if (S.contents.len < S.storage_slots)
 					Item.loc = S
 					ok = 1
 					testing("Added to [S]!")
-					M << "\blue Your [Item.name] has been added to your [S.name]."
+					to_chat(M, "<span class='notice'>Your [Item.name] has been added to your [S.name].</span>")
 					break
 
 		//skip:
@@ -87,15 +88,15 @@
 	B=icon:icons/dmi/lol.dmi:STATE;
 	B=number:29;
 	*/
-	var/list/statements=text2list(script,";")
+	var/list/statements=splittext(script,";")
 	if(statements.len==0)
 		return // Don't even bother.
 	for(var/statement in statements)
-		var/list/assignmentChunks = text2list(statement,"=")
+		var/list/assignmentChunks = splittext(statement,"=")
 		var/varname = assignmentChunks[1]
 		//var/operator = "="
 
-		var/list/typeChunks=text2list(script,":")
+		var/list/typeChunks=splittext(script,":")
 		var/desiredType=typeChunks[1]
 		//var/value
 		switch(desiredType)
@@ -124,11 +125,11 @@
 /proc/EquipCustomItems(mob/living/carbon/human/M)
 	// load lines
 	var/file = file2text("config/custom_items.txt")
-	var/lines = text2list(file, "\n")
+	var/lines = splittext(file, "\n")
 
 	for(var/line in lines)
 		// split & clean up
-		var/list/Entry = text2list(line, ":")
+		var/list/Entry = splittext(line, ":")
 		for(var/i = 1 to Entry.len)
 			Entry[i] = trim(Entry[i])
 
@@ -136,7 +137,7 @@
 			continue;
 
 		if(Entry[1] == M.ckey && Entry[2] == M.real_name)
-			var/list/Paths = text2list(Entry[3], ",")
+			var/list/Paths = splittext(Entry[3], ",")
 			for(var/P in Paths)
 				var/ok = 0  // 1 if the item was placed successfully
 				P = trim(P)

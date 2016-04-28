@@ -171,7 +171,7 @@ vs_control
 			vars[ch] = vw
 		if(how == "Toggle")
 			newvar = (newvar?"ON":"OFF")
-		world << "\blue <b>[key_name(user)] changed the setting [display_description] to [newvar].</b>"
+		to_chat(world, "<span class='notice'><b>[key_name(user)] changed the setting [display_description] to [newvar].</b></span>")
 		if(ch in plc.settings)
 			ChangeSettingsDialog(user,plc.settings)
 		else
@@ -296,7 +296,7 @@ vs_control
 				airflow_mob_slowdown = 3
 
 
-		world << "\blue <b>[key_name(user)] changed the global plasma/ZAS settings to \"[def]\"</b>"
+		to_chat(world, "<span class='notice'><b>[key_name(user)] changed the global plasma/ZAS settings to \"[def]\"</b></span>")
 
 pl_control
 	var/list/settings = list()
@@ -321,7 +321,7 @@ pl_control
 			else if(istext(vars["[V]_RANDOM"]))
 				var/txt = vars["[V]_RANDOM"]
 				if(findtextEx(txt,"PROB"))
-					txt = text2list(txt,"/")
+					txt = splittext(txt,"/")
 					txt[1] = replacetext(txt[1],"PROB","")
 					var/p = text2num(txt[1])
 					var/r = txt[2]
@@ -331,7 +331,7 @@ pl_control
 						newvalue = vars[V]
 				else if(findtextEx(txt,"PICK"))
 					txt = replacetext(txt,"PICK","")
-					txt = text2list(txt,",")
+					txt = splittext(txt,",")
 					newvalue = pick(txt)
 				else
 					newvalue = roll(txt)
