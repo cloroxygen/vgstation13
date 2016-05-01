@@ -56,16 +56,19 @@ They can only use one tool at a time, they can't choose modules, and they have 1
 	return 0
 
 /mob/living/silicon/robot/mommi/sammi/help_shake_act(mob/user)
+	if(!src.locked)
 
-	var/sammitask = reject_bad_text(input(user,"Enter a task for this SAMMI:","SAMMI Controller",""))
-	if(!sammitask || !length(sammitask))
-		to_chat(user, "<span class='notice'>Invalid text.</span>")
-		return
-	var/hold = list(src.laws.inherent[1], sammitask, src.laws.inherent[3])
-	src.laws.inherent = hold
-	src.show_laws()
-	message_admins("<span class='warning'>[src.name] updated with: <span class='notice'>[sammitask]</span> -by: [key_name(usr, usr.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a></span>)",0,1)
-	user.visible_message("<span class='notice'>[user.name] enters commands into [src.name].</span>")
+		var/sammitask = reject_bad_text(input(user,"Enter a task for this SAMMI:","SAMMI Controller",""))
+		if(!sammitask || !length(sammitask))
+			to_chat(user, "<span class='notice'>Invalid text.</span>")
+			return
+		var/hold = list(src.laws.inherent[1], sammitask, src.laws.inherent[3])
+		src.laws.inherent = hold
+		src.show_laws()
+		message_admins("<span class='warning'>[src.name] updated with: <span class='notice'>[sammitask]</span> -by: [key_name(usr, usr.client)](<A HREF='?_src_=holder;adminmoreinfo=\ref[usr]'>?</A>) in ([x],[y],[z] - <A HREF='?_src_=holder;adminplayerobservecoodjump=1;X=[x];Y=[y];Z=[z]'>JMP</a></span>)",0,1)
+		user.visible_message("<span class='notice'>[user.name] enters commands into [src.name].</span>")
+	else
+		to_chat(user, "<span class='notice'>The input interface is locked!</span>")
 
 /mob/living/silicon/robot/mommi/sammi/attackby(obj/item/W, mob/user)
 
